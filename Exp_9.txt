@@ -1,0 +1,39 @@
+clc;
+clear all;
+close all;
+
+x = [0:7]
+N = 8;
+X = fft(x,8);
+N1=4;
+N2 = 2;
+xe = x(1:2:N);
+xo = x(2:2:end);
+
+W = [ 1 1 1 1 ;1 -i -1 i; 1 -1 1 -1; 1 i -1 -i];
+
+for r = 1:4
+    X1(:,r)= sum(xe.*W(r,:));
+    X2(:,r)= sum(xo.*W(r,:));
+end
+
+for r = 1:8
+    for c = 1:8
+        W8(r,c)=exp((-2i*pi*((r-1)*(c-1)))/N);
+    end
+end
+
+X1 = X1.*W8(1,1:4);
+X2 = X2.*W8(2,1:4);
+
+for r = 1:N1
+    X2pnt(:,r) = fft([X1(r), X2(r)]);
+end
+
+sprfft(1:4) = X2pnt(1,:);
+sprfft(5:8) = X2pnt(2,:);
+fft(x)
+sprfft
+
+
+    

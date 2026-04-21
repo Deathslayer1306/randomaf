@@ -1,0 +1,37 @@
+clc;
+clear all;
+close all;
+[x1,Fs1]=audioread("music_new.mp3");
+[x2,Fs2]=audioread("speech_new.mp3");
+N= min(length(x1),length(x2));
+x1_new = x1(1:N);
+x2_new = x2(1:N);
+alpha=0.1;
+beta=0.9;
+x=(alpha*x1_new)+(beta*x2_new);
+sound(x1_new, Fs1);
+pause(6);
+sound(x2_new,Fs2);
+pause(6);
+sound(x);
+Fs= min(Fs1,Fs2);
+x1_renew = resample(x1, Fs, Fs1);
+x2_renew = resample(x2, Fs, Fs2);
+N= min(length(x1_renew),length(x2_renew))
+xq=x1_renew(1:N);
+xw=x2_renew(1:N);
+xnew=(alpha*xq)+(beta*xw);
+sound(x1_new);
+pause(6);
+sound(x2_new);
+pause(6);
+sound(xnew);
+
+subplot(4,1,1);
+plot(pwelch(x1));
+subplot(4,1,2);
+plot(pwelch(x2));
+subplot(4,1,3);
+plot(pwelch(x));
+subplot(4,1,4);
+plot(pwelch(xnew));

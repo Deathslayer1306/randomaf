@@ -1,0 +1,101 @@
+clc;
+close all;
+clear all;
+
+B = 4; % we have total B+1 bits including sign bit
+
+% defining the transfer function
+b = [1 0 0];
+a = [1 -1.35 0.425];
+
+nonfraca = ceil(log2(max(abs(a))));
+nonfracb = ceil(log2(max(abs(b))));
+
+qa = B - nonfraca;
+
+ahat = round(a * (2^qa)) / (2^qa);
+bhat = [1 0 0];
+
+[H, w] = freqz(b, a, 1024);
+[Hhat, what] = freqz(bhat, ahat, 1024);
+
+figure(1);
+
+subplot(2,2,1);
+plot(w, abs(H));
+
+subplot(2,2,2);
+plot(what, abs(Hhat));
+
+subplot(2,2,3);
+zplane(b, a);
+
+subplot(2,2,4);
+zplane(bhat, ahat);
+
+disp('Direct form');
+[roots(a) roots(ahat)];
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cascade
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% defining the transfer function
+figure(2);
+
+b1 = [1 0];
+a1 = [1 -0.5];
+
+
+[H1, ~] = freqz(b1, a1, 1024);
+
+b2 = [1 0];
+a2 = [1 -0.85];
+
+[H2, ~] = freqz(b2, a2, 1024);
+
+H = H1 .* H2;
+
+nonfraca1 = ceil(log2(max(abs(a1))));
+nonfracb1 = ceil(log2(max(abs(b1))));
+nonfraca2 = ceil(log2(max(abs(a2))));
+nonfracb2 = ceil(log2(max(abs(b2))));
+
+qa1 = B - nonfraca1;
+qa2 = B - nonfraca2;
+
+ahat1 = round(a1 * (2^qa1)) / (2^qa1);
+bhat1 = [1 0];
+
+ahat2 = round(a2 * (2^qa2)) / (2^qa2);
+bhat2 = [1 0];
+
+[Hhat1, ~] = freqz(bhat1, ahat1, 1024);
+[Hhat2, w] = freqz(bhat2, ahat2, 1024);
+
+Hhat = Hhat1 .* Hhat2;
+
+subplot(2,2,1);
+plot(w, abs(H));
+
+subplot(2,2,2);
+plot(w, abs(Hhat));
+
+subplot(2,2,3);
+zplane(b1, a1);
+
+subplot(2,2,4);
+
+[p1, z1] = pzmap(bhat1, ahat1);
+[p2, z2] = pzmap(bhat2, ahat2);
+
+zplaneplot(z1, p1);
+hold on;
+zplaneplot(z2, p2);
+
+axis([-1.1 1.1 -1.1 1.1]);
+
+disp('Cascade');
+[roots(a1) roots(ahat1)];
+[roots(a2) roots(ahat2)];
