@@ -1,0 +1,173 @@
+clc;
+
+close all;
+
+clear all;
+
+
+%PART-01
+
+pkg load image;
+
+I=imread('C:\Users\admin\Downloads\OneDrive_2026-01-27\Sample images\cute_cat.jfif');
+
+subplot(2,3,1)
+
+subimage(I)
+
+title('original cat');
+
+s=size(I);
+
+
+I1=imread('C:\Users\admin\Downloads\OneDrive_2026-01-27\Sample images\cutedog.jpg');
+
+subplot(2,3,2)
+
+subimage(I1)
+
+title('original dog');
+
+s1=size(I1);
+
+
+difference=s1-s;
+
+x=difference(1);
+
+I2=I;
+
+for i=s(1):s(1)+x
+
+for j=1:s(2)
+
+I2(i,j)=0;
+
+endfor
+
+end
+
+subplot(2,3,3)
+
+subimage(I2)
+
+title('padded cat row')
+
+y=abs(difference(2));
+
+
+for i=1:s(1)
+
+for j=s(2):s(2)+y
+
+I2(i,j)=0;
+
+endfor
+
+end
+
+subplot(2,3,4)
+
+subimage(I2)
+
+title('padded cat column');
+
+
+newImg1=double(I1)+double(I2);
+
+newImg2=double(I1)-double(I2);
+
+newImg1=uint8(newImg1);
+
+newImg2=uint8(newImg2);
+
+
+subplot(2,3,5)
+
+subimage(newImg1)
+
+title('addition image');
+
+subplot(2,3,6)
+
+subimage(newImg2)
+
+title('subtractio image');
+
+
+%PART-02
+
+Ik=zeros(s1(1),s1(2));
+
+lim1=50;
+
+lim2=250;
+
+
+for i=lim1:lim2
+
+for j=lim1:lim2
+
+Ik(i,j)=1;
+
+endfor
+
+end
+
+figure;
+
+Ik=im2bw(Ik);
+
+subplot(1,3,1)
+
+imshow(Ik)
+
+title('ROI patch');
+
+subplot (1,3, 2)
+
+imshow(I1);
+
+title('image');
+
+I_mult=uint8(Ik).*I1;
+
+subplot(1,3,3)
+
+imshow(I_mult);
+
+title('IMAGE ROI CAPTURED');
+
+
+%PART-03
+
+
+dullImg=imread('C:\Users\admin\Downloads\OneDrive_2026-01-27\Sample images\tissues.tif');
+
+brightImg=imread('C:\Users\admin\Downloads\OneDrive_2026-01-27\Sample images\cameraman.tif');
+
+figure;
+
+subplot(2,2,1);
+
+imshow(dullImg)
+
+title('dull image');
+
+subplot(2,2,2);
+
+hist(dullImg);
+
+title('HISTOGRAM OF DULL IMAGE')
+
+subplot(2,2,3);
+
+imshow(brightImg)
+
+title('bright image');
+
+subplot(2,2,4);
+
+hist(brightImg);
+
+title('HISTOGRAM OF BRIGHT IMAGE')
