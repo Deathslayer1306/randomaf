@@ -1,0 +1,116 @@
+PART-01:
+
+import cv2
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+import os
+
+inputFolder = r'C:\Users\admin\Downloads\Sample images\dull img'
+
+outputFolder = r'C:\Users\admin\Downloads\Sample images\ep2 op'
+
+os.makedirs(outputFolder, exist_ok=True)
+
+extensions = ('.tif','.jpeg','.tif')
+
+for file in os.listdir(inputFolder):
+
+path = os.path.join(inputFolder,file)
+
+I = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+
+I_he = cv2.equalizeHist(I)
+
+
+plt.figure(figsize=(8, 3))
+
+plt.subplot(1,2,1)
+
+plt.imshow(I, cmap='gray')
+
+plt.title('og')
+
+plt.axis('off')
+
+
+plt.subplot(1,2,2)
+
+plt.imshow(I_he, cmap='gray')
+
+plt.title('histogram equalized')
+---------------------------------------------------------------------------.
+PART-02
+
+
+image_path = r'C:\Users\admin\Downloads\Sample images\lena.tif'
+
+I=cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+I_f=I.astype(np.float32)
+
+r1,r2 = 70,180
+
+s1,s2=30,220
+
+m1=s1/r1
+
+m2=(s2-s1)/(r2-r1)
+
+m3=(255-s2)/(255-r2)
+
+I_cs=np.zeros_like(I_f)
+
+mask1=I_f<=r1
+
+mask2=(I_f>r1)&(I_f<=r2)
+
+mask3=I_f>r2
+
+I_cs[mask1]=m1*I_f[mask1]
+
+I_cs[mask2]=s1+m2*(I_f[mask2]-r1)
+
+I_cs[mask3]=s2+m3*(I_f[mask3]-r2)
+
+
+i_cs=np.clip(I_cs, 0,255).astype(np.uint8)
+
+plt.figure(figsize=(8, 3))
+
+plt.subplot(1,2,1)
+
+plt.imshow(I, cmap='gray')
+
+plt.title('og dull')
+
+plt.axis('off')
+
+
+plt.subplot(1,2,2)
+
+plt.imshow(I_cs, cmap='gray')
+
+plt.title('contrast stretched(knee pts')
+
+
+plt.show()
+
+plt.figure(figsize=(8,3))
+
+plt.subplot(1,2,1)
+
+plt.hist(I.ravel(), 256)
+
+plt.title('og histogram')
+
+plt.axis('off')
+
+
+plt.subplot(1,2,2)
+
+plt.hist(I_cs.ravel(), 256)
+
+plt.title('contrast stretched hist')

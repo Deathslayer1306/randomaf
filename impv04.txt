@@ -1,0 +1,60 @@
+import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+import math
+import os
+
+img = cv2.imread(r'C:\Users\admin\Downloads\Sample_img\Sample images\myimg.jpg')
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+sp = cv2.imread(r'C:\Users\admin\Downloads\Sample_img\Sample images\Noisy Image\saltp')
+g = cv2.imread(r'C:\Users\admin\Downloads\Sample_img\Sample images\Noisy Image\gaussi')
+b = cv2.imread(r'C:\Users\admin\Downloads\Sample_img\Sample images\Noisy Image\blur.p')
+
+# Median Blur for Salt & Pepper Noise
+median_restored = cv2.medianBlur(sp, 3)
+
+# Gaussian Blur
+gaussain_restored = cv2.GaussianBlur(g, (3, 3), 0)
+
+# Averaging (Box Filter)
+averaged_restored = cv2.blur(b, (1, 1))
+
+plt.subplot(2, 2, 1)
+plt.imshow(img)
+plt.title("original img")
+
+plt.subplot(2, 2, 2)
+plt.imshow(median_restored)
+plt.title("salt & pepper")
+
+plt.subplot(2, 2, 3)
+plt.imshow(gaussain_restored)
+plt.title("gaussian")
+
+plt.subplot(2, 2, 4)
+plt.imshow(averaged_restored)
+plt.title("blur")
+
+def mse(original, noisy):
+    return np.mean((original-noisy)**2)
+
+def psnr(original, noisy):
+    m= mse(original, noisy)
+    if m==0:
+        return 100
+    return 20*math.log10(255/math.sqrt(m))
+
+print("\n Image Quantity Metrics")
+
+print("Salt and Pepper Noise restored img")
+print("MES:", mse(img, median_restored))
+print("PSNR:", psnr(img, median_restored), "\n")
+
+print("Gaussian Noise restored img")
+print("MES:", mse(img, gaussain_restored))
+print("PSNR:", psnr(img, gaussain_restored), "\n")
+
+print("Blur Noise restored img")
+print("MES:", mse(img, averaged_restored))
+print("PSNR:", psnr(img, averaged_restored), "\n")
